@@ -12,6 +12,7 @@ def posicionar_barco_aleatorio (tablero, tamanio, barcos):
         while not colocado:
             orientaciones = ["N", "S", "E", "O"]
             orientacion = random.choice(orientaciones)
+
             # Definimos las variables para la fila inicial y para la columna inicial
             fila_inicial = random.randint(0, tablero.shape[0] - 1)
             columna_inicial = random.randint(0, tablero.shape[1] - 1)
@@ -35,3 +36,20 @@ def posicionar_barco_aleatorio (tablero, tamanio, barcos):
                     posiciones.append((fila, columna))
                 else:
                     break
+
+                # Comprobamos si cuando generamos un barco aleatoriamente, no pisemos a otro
+                # Verifica si el barco tiene la longitud correcta
+                if len(posiciones) == longitud:
+                    # Comprueba si todas las posiciones están vacías
+                    posiciones_vacias = True
+                    for pos in posiciones:
+                        if tablero[pos] != " ":
+                            posiciones_vacias = False
+                            break
+                            
+                    # Si todas las posiciones están vacías, posiciona el barco y termina el bucle
+                    if posiciones_vacias:
+                        posicionar_barco(tablero, posiciones)
+                        break
+
+
