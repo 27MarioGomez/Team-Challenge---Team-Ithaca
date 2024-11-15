@@ -1,6 +1,7 @@
 import numpy as np
 import variables as var
 from variables import tamanio
+import random
 
 class Tablero:
 # Definimos tamaño y barcos como variables fijas y tablero vacio seria un array a rellenar más adelante
@@ -38,33 +39,34 @@ class Tablero:
         return [self.tablero_disparos , self.tablero_vacio, tocado]
 
 # Funcion para posicionar los barcos aleatoriamente desde el inicio
-    def posicionar_barco_aleatorio (tablero, tamanio, barcos):
+    def posicionar_barco_aleatorio (self, barcos): # Algo va mal de esta funcion
         for barco, longitud in barcos.items():
-            colocado = False
-            while not colocado:
+            # colocado = False
+            # while not colocado:
+            while True:
                 orientaciones = ["N", "S", "E", "O"]
                 orientacion = random.choice(orientaciones)
 
                 # Definimos las variables para la fila inicial y para la columna inicial
-                fila_inicial = random.randint(0, tablero.shape[0] - 1)
-                columna_inicial = random.randint(0, tablero.shape[1] - 1)
+                fila_inicial = random.randint(0, self.tablero_disparos.shape[0] - 1)
+                columna_inicial = random.randint(0, self.tablero_disparos.shape[1] - 1)
                 posiciones = []
-                for i in range(longitud):
+                for i in range(longitud): # no se si son unos o is
                     if orientacion == "N":
-                        fila = fila_inicial - i # Lo restamos para movernos al norte
+                        fila = fila_inicial - 1 # Lo restamos para movernos al norte
                         columna = columna_inicial
                     elif orientacion == "S":
-                        fila = fila_inicial + i
+                        fila = fila_inicial + 1
                         columna = columna_inicial
                     elif orientacion == "E":
                         fila = fila_inicial
-                        columna = columna_inicial + i
+                        columna = columna_inicial + 1
                     elif orientacion == "O":
                         fila = fila_inicial
-                        columna = columna_inicial - i
+                        columna = columna_inicial - 1
                     
                     # Comprobamos si la nueva posición está dentro del tablero
-                    if 0 <= fila < tablero.shape[0] and 0 <= columna < tablero.shape[1]:
+                    if (0 <= fila < self.tablero_disparos.shape[0]) and (0 <= columna < self.tablero_disparos.shape[1]):
                         posiciones.append((fila, columna))
                     else:
                         break
@@ -75,11 +77,13 @@ class Tablero:
                         # Comprueba si todas las posiciones están vacías
                         posiciones_vacias = True
                         for pos in posiciones:
-                            if tablero[pos] != " ":
+                            if self.tablero_disparos[pos] != " ":
                                 posiciones_vacias = False
                                 break
                                 
                         # Si todas las posiciones están vacías, posiciona el barco y termina el bucle
                         if posiciones_vacias:
-                            posicionar_barco(tablero, posiciones)
+                            print(posiciones)
+                            self.posicionar_barco(posiciones) #self.tablero_disparos,
                             break
+        return self.tablero_disparos

@@ -24,7 +24,8 @@ flota_jugador = [barco1_jugador,barco2_jugador]
 # Creamos todas las posiciones de forma temporal como una lista de tuplas
 flota_pc = [(0,1),(2,2),(3,2)]
 # Colocmos los barcos del pc
-posiciones_pc = tablero_pc.posicionar_barco (flota_pc)
+#posiciones_pc = tablero_pc.posicionar_barco (flota_pc)
+posiciones_pc = tablero_pc.posicionar_barco_aleatorio(var.barcos)
 print(posiciones_pc)
 
 #introducimos los disparos y si aciertas te sigue tocando
