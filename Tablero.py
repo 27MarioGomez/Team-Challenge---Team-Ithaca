@@ -41,6 +41,7 @@ class Tablero:
 # Funcion para posicionar los barcos aleatoriamente desde el inicio
     def posicionar_barco_aleatorio (self, barcos): # Algo va mal de esta funcion
         for barco, longitud in barcos.items():
+            print(longitud)
             # colocado = False
             # while not colocado:
             while True:
@@ -53,17 +54,17 @@ class Tablero:
                 posiciones = []
                 for i in range(longitud): # no se si son unos o is
                     if orientacion == "N":
-                        fila = fila_inicial - 1 # Lo restamos para movernos al norte
+                        fila = fila_inicial - i # Lo restamos para movernos al norte
                         columna = columna_inicial
                     elif orientacion == "S":
-                        fila = fila_inicial + 1
+                        fila = fila_inicial + i
                         columna = columna_inicial
                     elif orientacion == "E":
                         fila = fila_inicial
-                        columna = columna_inicial + 1
+                        columna = columna_inicial + i
                     elif orientacion == "O":
                         fila = fila_inicial
-                        columna = columna_inicial - 1
+                        columna = columna_inicial - i
                     
                     # Comprobamos si la nueva posición está dentro del tablero
                     if (0 <= fila < self.tablero_disparos.shape[0]) and (0 <= columna < self.tablero_disparos.shape[1]):
@@ -71,19 +72,19 @@ class Tablero:
                     else:
                         break
 
-                    # Comprobamos si cuando generamos un barco aleatoriamente, no pisemos a otro
-                    # Verifica si el barco tiene la longitud correcta
-                    if len(posiciones) == longitud:
-                        # Comprueba si todas las posiciones están vacías
-                        posiciones_vacias = True
-                        for pos in posiciones:
-                            if self.tablero_disparos[pos] != " ":
-                                posiciones_vacias = False
-                                break
-                                
-                        # Si todas las posiciones están vacías, posiciona el barco y termina el bucle
-                        if posiciones_vacias:
-                            print(posiciones)
-                            self.posicionar_barco(posiciones) #self.tablero_disparos,
+                # Comprobamos si cuando generamos un barco aleatoriamente, no pisemos a otro
+                # Verifica si el barco tiene la longitud correcta
+                if len(posiciones) == longitud:
+                    # Comprueba si todas las posiciones están vacías
+                    posiciones_vacias = True
+                    for pos in posiciones:
+                        if self.tablero_disparos[pos] != " ":
+                            posiciones_vacias = False
                             break
+                            
+                    # Si todas las posiciones están vacías, posiciona el barco y termina el bucle
+                    if posiciones_vacias:
+                        print(posiciones)
+                        self.posicionar_barco(posiciones) #self.tablero_disparos,
+                        break
         return self.tablero_disparos
