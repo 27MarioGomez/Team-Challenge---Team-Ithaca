@@ -88,3 +88,5 @@ class Tablero:
                         self.posicionar_barco(posiciones) #self.tablero_disparos,
                         break
         return self.tablero_disparos
+    
+    

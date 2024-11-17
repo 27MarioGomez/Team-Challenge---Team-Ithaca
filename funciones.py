@@ -9,7 +9,10 @@ def posicionar_barco(tablero, posiciones):
 def posicionar_barco_aleatorio (tablero, tamanio, barcos):
     for barco, longitud in barcos.items():
         colocado = False
-        while not colocado:
+        intentos = 0
+        max_intentos = 100  # Limitar la cantidad de intentos para evitar bucles infinitos
+        
+        while not colocado and intentos < max_intentos:
             orientaciones = ["N", "S", "E", "O"]
             orientacion = random.choice(orientaciones)
 
