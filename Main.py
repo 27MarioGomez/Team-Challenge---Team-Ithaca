@@ -16,8 +16,6 @@ tablero_jugador = Tablero(nombre_jugador, np.full((var.tamanio,var.tamanio), " "
 barco1_pc = ([0,1])
 barco2_pc = ([(2,2),(3,2)])
 flota_pc = [barco1_pc, barco2_pc]
-
-
 barco1_jugador = ([1,1])
 barco2_jugador = ([(3,4),(3,5)])
 flota_jugador = [barco1_jugador,barco2_jugador]
