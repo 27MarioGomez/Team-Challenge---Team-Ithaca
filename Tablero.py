@@ -27,21 +27,20 @@ class Tablero:
             self.tablero_disparos[coordenada] = "X"
             self.tablero_vacio[coordenada] = "X"
             tocado = True
-            print ("Tocado")
+            print ("\n¡Tocado! Sigue así, vuelves a disparar.\n")
         elif self.tablero_disparos[coordenada] == "-":
-            print ("Ya habías disparado aqui")
+            print ("\nEstate atento. Ya habías disparado aqui :(\n)")
         elif self.tablero_disparos[coordenada] == "X":
-            print ("Ya me habías dado")
+            print ("\nEstate atento. Ya me habías dado\n")
         else:
             self.tablero_disparos[coordenada] = "-"
             self.tablero_vacio[coordenada] = "-"
-            print ("Agua")
+            print ("\n¡Agua! Aquí no hay barco.\n")
         return [self.tablero_disparos , self.tablero_vacio, tocado]
 
 # Funcion para posicionar los barcos aleatoriamente desde el inicio
     def posicionar_barco_aleatorio (self, barcos): # Algo va mal de esta funcion
         for barco, longitud in barcos.items():
-            print(longitud)
             # colocado = False
             # while not colocado:
             while True:
@@ -84,7 +83,6 @@ class Tablero:
                             
                     # Si todas las posiciones están vacías, posiciona el barco y termina el bucle
                     if posiciones_vacias:
-                        print(posiciones)
                         self.posicionar_barco(posiciones) #self.tablero_disparos,
                         break
         return self.tablero_disparos
