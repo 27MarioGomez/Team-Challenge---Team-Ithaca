@@ -16,7 +16,7 @@ print ("Instrucciones:\n- Objetivo: Hunde todos los barcos del oponente antes de
 nombre_jugador = input ("\nPor favor, introduce tu nombre: ")
 
 # Condición inicial para jugar o no (se podría mirar añadir condición de salida)
-condicion = input(f"\nHola {nombre_jugador}, ¿te apetece comenzar una partida contra mi? ¿Sí o no? ") 
+condicion = input(f"\nHola {nombre_jugador}, ¿te apetece comenzar una partida contra mí? ¿Sí o no? ") 
 if (condicion.lower() == "si") or (condicion.lower() == "sí"):
     
     # Creamos los tableros del pc y del jugador
