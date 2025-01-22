@@ -2,6 +2,9 @@ def describe_df():
     print(rellenar)
 
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy.stats import pearsonr
 
 # Definir la función describe_df
 def describe_df(df):
@@ -99,7 +102,61 @@ def get_features_num_regression(df, target_col, umbral_corr, pvalue ):
         
     return columnas_seleccionadas
 
-def plot_features_num_regression():
+def plot_features_num_regression(df, target_col="", columns=[], umbral_corr=0, pvalue=None):
+    """
+    Genera gráficos pairplot para analizar la relación entre las variables numéricas y una columna objetivo en un dataframe.
+    También filtra y selecciona columnas en función de la correlación y significación estadística.
+    
+    Argumentos:
+    df (pd.DataFrame): DataFrame con los datos de entrada.
+    target_col (str): Columna objetivo para calcular correlaciones y representar gráficamente. Debe ser numérica.
+    columns (list): Lista de columnas a considerar. Si está vacía, se seleccionan automáticamente las columnas numéricas del DataFrame.
+    umbral_corr (float): Umbral mínimo de valor absoluto de la correlación para incluir una columna.
+    pvalue (float or None): Nivel de significación para el test de correlación. Si es None, no se realiza el test de significación.
+
+    Retorna:
+    list: Lista de columnas que cumplen con los criterios de correlación y significación estadística.
+    """
+
+    # Validaciones iniciales
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError("El argumento 'df' debe ser un DataFrame de pandas.")
+    if target_col not in df.columns:
+        raise ValueError(f"La columna objetivo '{target_col}' no existe en el DataFrame.")
+    if not pd.api.types.is_numeric_dtype(df[target_col]):
+        raise ValueError(f"La columna objetivo '{target_col}' debe ser numérica.")
+    
+    # Seleccionar columnas si la lista está vacía
+    if not columns:
+        columns = df.select_dtypes(include=['number']).columns.tolist()
+        columns.remove(target_col)  # Excluir la columna objetivo
+    else:
+        columns = [col for col in columns if col in df.columns]
+        if not columns:
+            raise ValueError("Ninguna de las columnas proporcionadas está en el DataFrame.")
+    
+    # Filtrar columnas según correlación y p-value
+    selected_columns = []
+    for col in columns:
+        if pd.api.types.is_numeric_dtype(df[col]):
+            corr, p = pearsonr(df[col], df[target_col])
+            if abs(corr) >= umbral_corr and (pvalue is None or p < pvalue):
+                selected_columns.append(col)
+
+    # Generar gráficos por lotes de cinco columnas
+    if selected_columns:
+        for i in range(0, len(selected_columns), 5):
+            subset_columns = selected_columns[i:i+5]
+            # Agregar la columna objetivo para el pairplot
+            plot_columns = [target_col] + subset_columns
+            sns.pairplot(df[plot_columns], diag_kind="kde")
+            plt.show()
+    else:
+        print("No se encontraron columnas que cumplan con los criterios establecidos.")
+    
+    return selected_columns
+
+
 
 def get_features_cat_regression():
 
