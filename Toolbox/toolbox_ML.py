@@ -4,7 +4,7 @@ def describe_df():
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, f_oneway, kruskal, shapiro
 
 # Definir la función describe_df
 def describe_df(df):
@@ -173,6 +173,32 @@ def plot_features_num_regression(df, target_col="", columns=[], umbral_corr=0, p
 
 
 
-def get_features_cat_regression():
+def get_features_cat_regression(df, target_col, pvalue=0.05):
+    if not isinstance(df, pd.DataFrame):  #Aquí se comprueba si df es efectivamente un data frame y si no, muestra una columna de error
+        print("Error: 'df' debe ser un DataFrame."); return None
+    if target_col not in df.columns or not np.issubdtype(df[target_col].dtype, np.number):  #Verificamos que: target_col (la columna objetivo) exista en el DataFrame. Sea de tipo numérico. Si algo falla, mostramos un error y terminamos.
+        print(f"Error: '{target_col}' debe ser una columna numérica en el DataFrame."); return None
+    if not 0 < pvalue < 1:
+        print("Error: 'pvalue' debe estar entre 0 y 1."); return None #Comprobamos que el valor de pvalue esté entre 0 y 1 (debe ser válido para una prueba estadística). Si no cumple, paramos.
+    
+    categorical_columns = df.select_dtypes(include=['object', 'category']).columns   #Aquí buscamos las columnas categóricas del DataFrame, es decir, las que son de tipo object o category.
+                                                                                       #Si no encontramos ninguna columna categórica, mostramos un error y salimos.'''
+    if len(categorical_columns) == 0:
+        print("Error: No hay columnas categóricas."); return None
+    
+    
+    relevant_columns = []    #Creamos una lista vacía llamada relevant_columns para almacenar las columnas categóricas que tengan una relación estadísticamente significativa con la columna objetivo (target_col).
+    for col in categorical_columns:
+        groups = [group.dropna() for _, group in df.groupby(col)[target_col]] #Aquí se agrupan los datos de target_col por categorías de la columna actual, 
+        if len(groups) < 2 or any(group.empty for group in groups): #Para cada categoría, filtramos las filas correspondientes en el DataFrame (df[df[col] == category]) y seleccionamos la columna objetivo (target_col).
+            continue
+        if all(shapiro(g)[1] > pvalue for g in groups if len(g) >= 3):  #Mediante el código que sigue se verifica si los grupos siguen una dstribución normal
+            test_result = f_oneway(*groups)
+        else:
+            test_result = kruskal(*groups)
+        if test_result[1] < pvalue:
+            relevant_columns.append(col)
+
+    return relevant_columns
 
 def plot_features_cat_regression():
