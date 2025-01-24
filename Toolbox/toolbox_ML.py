@@ -51,7 +51,22 @@ print(result)
 
 def tipifica_variables():
 
-def get_features_num_regression(df, target_col, umbral_corr, pvalue ):
+def get_features_num_regression(df, target_col, umbral_corr, pvalue = None ):
+
+    '''Genera una lista de variables numéricas de un dataframe, sin añadir el target, 
+    estableciendo un umbral de correlación y un p-value que por defecto es None. En caso de que se de valor al p-value,
+    la variable deberá ser mayor o iggual a 1 - pvalue. 
+
+    Argumentos:
+    df (pd.DataFrame): DataFrame con los datos de entrada.
+    target_col: columna objetivo que no debe aparecer en nuestra lista de variables numéricas.
+    umbral_corr: Umbral de la correlación para incluir una columna.
+    pvalue: nivel de significación para el test de correlación. Por defecto es None.
+
+    Retorna:
+    columnas_seleccionadas: lista de columnas numéricas que cumplen con los criterios de correlación.
+    
+    '''
 
     #Comprobaciones de la función:
     
