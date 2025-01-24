@@ -1,10 +1,22 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.stats import pearsonr, f_oneway, kruskal, shapiro
+
 
 # Definir la función describe_df
 def describe_df(df):
+    '''
+    Genera un resumen detallado de un DataFrame, mostrando información clave para cada columna. 
+    
+    Argumentos: df (pd.DataFrame): El DataFrame a describir. 
+    Retorna: pd.DataFrame: Un DataFrame con las siguientes métricas en las filas por cada columna: 
+        - Tipo de Dato: Tipo de datos de la columna (int, float, object, etc.). 
+        - Porcentaje de Valores Nulos: Proporción de valores faltantes en la columna. 
+        - Valores Únicos: Número de valores únicos presentes en la columna. 
+        - Porcentaje de Cardinalidad: Proporción de valores únicos en relación al total de filas.  
+    '''
     # Inicializamos el diccionario para almacenar los resultados
     description = {
         'Tipo de Dato': [],
@@ -31,19 +43,9 @@ def describe_df(df):
         description['Porcentaje de Cardinalidad'].append(cardinality_percentage)
     
     # Convertimos el diccionario en un DataFrame
-    description_df = pd.DataFrame(description, index=df.columns)
+    description_df = pd.DataFrame(description, index=df.columns).T
     
     return description_df
-
-# Cargar el dataset desde la ruta especificada
-file_path = r'C:\Users\angel\OneDrive\Documentos\DATA_SCIENCE\Bootcamp\Team-Challenge---Team-Ithaca\Toolbox\data\heart_cleveland_upload.csv'
-df = pd.read_csv(file_path)
-
-# Aplicar la función describe_df sobre el dataframe cargado
-result = describe_df(df)
-
-# Mostrar el resultado
-print(result)
 
 
 def tipifica_variables():
@@ -51,9 +53,10 @@ def tipifica_variables():
 
 def get_features_num_regression(df, target_col, umbral_corr, pvalue = None):
 
-    '''Genera una lista de variables numéricas de un dataframe, sin añadir el target, 
+    '''
+    Genera una lista de variables numéricas de un dataframe, sin añadir el target, 
     estableciendo un umbral de correlación y un p-value que por defecto es None. En caso de que se de valor al p-value,
-    la variable deberá ser mayor o iggual a 1 - pvalue. 
+    la variable deberá ser mayor o igual a 1 - pvalue. 
 
     Argumentos:
     df (pd.DataFrame): DataFrame con los datos de entrada.
@@ -149,17 +152,18 @@ def plot_features_num_regression(df, target_col="", columns=[], umbral_corr=0, p
             raise ValueError("Ninguna de las columnas proporcionadas está en el DataFrame.")
     
     # Filtrar columnas según correlación y p-value
-    selected_columns = []
+    selected_columns = get_features_num_regression(df, target_col=target_col, umbral_corr= umbral_corr, pvalue = None)
+    '''selected_columns = []
     for col in columns:
         if pd.api.types.is_numeric_dtype(df[col]):
             corr, p = pearsonr(df[col], df[target_col])
             if abs(corr) >= umbral_corr and (pvalue is None or p < pvalue):
-                selected_columns.append(col)
+                selected_columns.append(col)'''
 
     # Generar gráficos por lotes de cinco columnas
     if selected_columns:
-        for i in range(0, len(selected_columns), 5):
-            subset_columns = selected_columns[i:i+5]
+        for i in range(0, len(selected_columns), 4):
+            subset_columns = selected_columns[i:i+4]
             # Agregar la columna objetivo para el pairplot
             plot_columns = [target_col] + subset_columns
             sns.pairplot(df[plot_columns], diag_kind="kde")
@@ -172,6 +176,30 @@ def plot_features_num_regression(df, target_col="", columns=[], umbral_corr=0, p
 
 
 def get_features_cat_regression(df, target_col, pvalue=0.05):
+    """
+    Identifica las columnas categóricas que tienen una relación estadísticamente significativa con 
+    una columna objetivo numérica en un DataFrame, usando pruebas estadísticas.
+
+    Argumentos:
+    - df (pd.DataFrame): DataFrame que contiene los datos a analizar.
+    - target_col (str): Nombre de la columna objetivo que debe ser numérica.
+    - pvalue (float, opcional): Nivel de significación para las pruebas estadísticas. Debe estar entre 0 y 1. 
+    Por defecto es 0.05.
+
+    Retorna:
+    - list: Lista de columnas categóricas que tienen una relación estadísticamente significativa con la columna 
+    objetivo.
+
+    Descripción general:
+    1. Valida que los argumentos sean correctos.
+    2. Identifica las columnas categóricas del DataFrame.
+    3. Realiza pruebas estadísticas (ANOVA o Kruskal-Wallis) entre la columna objetivo y las columnas categóricas.
+    4. Selecciona las columnas categóricas con valores p menores al umbral especificado.
+    
+    Notas:
+    - Usa ANOVA si los datos en los grupos tienen distribución normal, y Kruskal-Wallis si no.
+    - Maneja errores comunes, como falta de columnas categóricas o valores no válidos para `pvalue`.
+    """
     if not isinstance(df, pd.DataFrame):  #Aquí se comprueba si df es efectivamente un data frame y si no, muestra una columna de error
         print("Error: 'df' debe ser un DataFrame."); return None
     if target_col not in df.columns or not np.issubdtype(df[target_col].dtype, np.number):  #Verificamos que: target_col (la columna objetivo) exista en el DataFrame. Sea de tipo numérico. Si algo falla, mostramos un error y terminamos.
@@ -253,8 +281,8 @@ def plot_features_cat_regression(df, target_col="", columns=None, pvalue=0.05, w
     # 2. Selección de features
     # Esto borrarlo y poner el resultado de la funcion anterior
     # Selección de features
-    # selected_features = get_features_cat_regression(df=df, target_col=target_col,pvalue=pvalue)
-    selected_features = []
+    selected_features = get_features_cat_regression(df=df, target_col=target_col,pvalue=pvalue)
+    '''selected_features = []
     
     for col in columns:
         if df[col].nunique() <= 1:
@@ -274,7 +302,7 @@ def plot_features_cat_regression(df, target_col="", columns=None, pvalue=0.05, w
             
 
         if p_val <= pvalue:
-            selected_features.append(col)
+            selected_features.append(col)'''
     ####### 
 
     # 3. Plot de las features significativas
