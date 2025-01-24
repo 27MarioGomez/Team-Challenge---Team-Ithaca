@@ -1,6 +1,3 @@
-def describe_df(): 
-    print(rellenar)
-
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -50,8 +47,9 @@ print(result)
 
 
 def tipifica_variables():
+    print("Falta rellenarla")
 
-def get_features_num_regression(df, target_col, umbral_corr, pvalue = None ):
+def get_features_num_regression(df, target_col, umbral_corr, pvalue = None):
 
     '''Genera una lista de variables numéricas de un dataframe, sin añadir el target, 
     estableciendo un umbral de correlación y un p-value que por defecto es None. En caso de que se de valor al p-value,
@@ -201,4 +199,132 @@ def get_features_cat_regression(df, target_col, pvalue=0.05):
 
     return relevant_columns
 
-def plot_features_cat_regression():
+
+def plot_features_cat_regression(df, target_col="", columns=None, pvalue=0.05, with_individual_plot=False):
+    """
+    Pinta histogramas agrupados para variables significativas y devuelve las variables que cumplen el criterio estadístico.
+    
+    Argumentos:
+    - df (pd.dataframe): df que contiene los datos.
+    - target_col (str): Nombre de la columna objetivo. Debe ser numérica continua.
+    - columns (list): Lista de variables categóricas a analizar. Si es None, se seleccionarán todas las categóricas del df.
+    - pvalue (float): Nivel de significación estadística para considerar una relación como significativa.
+    - with_individual_plot (bool): Si True, generará gráficos individuales además de los agrupados.
+
+    Return:
+    - selected_features (list): Lista de columnas que tienen una relación significativa con la columna objetivo.
+    """
+    
+    # 1.
+    # Check de entradas
+
+    # Se comprueba que el df sea un pd df
+    if not isinstance(df, pd.DataFrame):
+        print("Error: El argumento 'df' debe ser un pandas df.")
+        return None
+
+    # Si no hay una columna target o si esta no está en el df
+    if not target_col or target_col not in df.columns:
+        print("Error: 'target_col' no está presente en el df.")
+        return None
+    
+    # Esta misma columna target debe ser de tipo numérica continua
+    if not np.issubdtype(df[target_col].dtype, np.number):
+        print("Error: 'target_col' debe ser una columna numérica y continua.")
+        return None
+    
+    # Comprueba que el p-valor es correcto si está entre 0 y 1 y es numérico
+    if not isinstance(pvalue, (float, int)) or not (0 < pvalue < 1):
+        print("Error: 'pvalue' debe ser un número entre 0 y 1.")
+        return None
+
+    # Comprueba si la lista está vacía
+    if not columns:
+        columns = df.select_dtypes(include=['category', 'object']).columns.tolist()
+        if not columns:
+            print("Error: No se encontraron columnas categóricas en el DataFrame.")
+    else:
+        # Validar que las columnas proporcionadas están en el DataFrame y son categóricas
+        columns = [col for col in columns if col in df.columns and df[col].dtype in ['category', 'object']]
+        if not columns:
+            print("Error: Ninguna de las columnas proporcionadas es categórica o no está en el DataFrame.")
+    
+
+    # 2. Selección de features
+    # Esto borrarlo y poner el resultado de la funcion anterior
+    # Selección de features
+    # selected_features = get_features_cat_regression(df=df, target_col=target_col,pvalue=pvalue)
+    selected_features = []
+    
+    for col in columns:
+        if df[col].nunique() <= 1:
+            continue  # Saltar columnas con una única categoría
+        
+        # Test de significancia ANOVA
+        groups = [df[target_col][df[col] == category].dropna() for category in df[col].unique()]
+        try:
+            _, p_val = f_oneway(*groups)
+        except ValueError:
+            print(f"Aviso: No se puede calcular ANOVA para la columna '{col}'. Usando prueba no paramétrica.")
+            try:
+                _, p_val = kruskal(*groups)
+            except ValueError:
+                print(f"Error al calcular Kruskal para la columna '{col}'. Se omitirá.")
+                continue
+            
+
+        if p_val <= pvalue:
+            selected_features.append(col)
+    ####### 
+
+    # 3. Plot de las features significativas
+    # Gráfico
+
+    if selected_features:
+
+        # Verificamos si 'with_individual_plot' es True y generamos los gráficos correspondientes
+        if with_individual_plot:
+
+            for column in selected_features:
+                unique_cats = df[column].unique()
+                for cat in unique_cats:
+                    plt.figure(figsize=(10, 6))
+                    sns.histplot(df[df[column] == cat][target_col], kde=True, bins=20, color="skyblue", alpha=0.7)
+                    plt.title(f"Distribución de '{target_col}' para '{column}' = '{cat}'")
+                    plt.xlabel(target_col)
+                    plt.ylabel("Frecuencia")
+                    plt.legend()
+                    plt.show()
+
+        # Si 'with_individual_plot' es False, generar gráficos agrupados
+        # Si es binario el target es diferente a si es continuo
+        if df[target_col].nunique() != 2:
+            for column in columns:
+                unique_cats = df[column].unique()
+                
+                plt.figure(figsize=(10, 6))
+                for cat in unique_cats:
+                    sns.histplot(df[df[column] == cat][target_col], kde=True, label=str(cat), bins=20)
+                
+                plt.title(f'Histograms of {target_col} for {column}')
+                plt.xlabel(target_col)
+                plt.ylabel('Frequency')
+                plt.legend()
+                plt.show()
+        else:
+            for column in columns:
+                unique_cats = df[column].unique()
+                plt.figure(figsize=(10, 6))
+                sns.countplot(x=df[column], hue=df[target_col], data=df)
+                plt.title(f'Proporción de {target_col} para {column}')
+                plt.xlabel(column)
+                plt.ylabel('Count')
+                plt.show()
+            
+
+    else:
+    # Si no había ninguna seleccionada
+        print("No se encontraron variables categóricas significativas para el nivel de significancia dado.")
+        return None
+
+    return selected_features
