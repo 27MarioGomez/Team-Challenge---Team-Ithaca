@@ -49,8 +49,6 @@ def describe_df(df):
 
 
 def tipifica_variables():
-import pandas as pd  # Asegúrate de importar pandas
-
 # Función tipifica_variables
 def tipifica_variables(df, umbral_categoria, umbral_continua):
     # Crear un DataFrame vacío para guardar los resultados
