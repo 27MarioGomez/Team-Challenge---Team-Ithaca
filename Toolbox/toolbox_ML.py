@@ -49,7 +49,55 @@ def describe_df(df):
 
 
 def tipifica_variables():
-    print("Falta rellenarla")
+    
+import pandas as pd
+
+# Función tipifica_variables
+def tipifica_variables(df, umbral_categoria, umbral_continua):
+    # Crear un DataFrame vacío para guardar los resultados
+    tipo_sugerido = []
+
+    # Iterar sobre las columnas del DataFrame
+    for column in df.columns:
+        # Obtener la cardinalidad de la columna
+        cardinalidad = df[column].nunique()
+        
+        # Sugerir el tipo de variable según las reglas dadas
+        if cardinalidad == 2:
+            tipo = "Binaria"
+        elif cardinalidad < umbral_categoria:
+            tipo = "Categórica"
+        else:
+            # Calcular el porcentaje de cardinalidad con respecto al total de filas
+            porcentaje_cardinalidad = cardinalidad / len(df)
+            if porcentaje_cardinalidad >= umbral_continua:
+                tipo = "Numerica Continua"
+            else:
+                tipo = "Numerica Discreta"
+        
+        # Añadir el resultado en la lista
+        tipo_sugerido.append((column, tipo))
+    
+    # Convertir la lista de tuplas en un DataFrame
+    resultado_df = pd.DataFrame(tipo_sugerido, columns=["nombre_variable", "tipo_sugerido"])
+    
+    return resultado_df
+
+# Leer el archivo CSV
+file_path = r'C:\Users\angel\OneDrive\Documentos\DATA_SCIENCE\Bootcamp\Team-Challenge---Team-Ithaca\Toolbox\data\heart_cleveland_upload.csv'
+df = pd.read_csv(file_path)
+
+# Definir umbrales
+umbral_categoria = 10  # Puedes ajustar este valor según tus necesidades
+umbral_continua = 0.1   # Puedes ajustar este valor según tus necesidades
+
+# Aplicar la función
+resultado = tipifica_variables(df, umbral_categoria, umbral_continua)
+
+# Mostrar el resultado
+print(resultado)
+
+
 
 def get_features_num_regression(df, target_col, umbral_corr, pvalue = None):
 
