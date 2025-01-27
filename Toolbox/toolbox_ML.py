@@ -49,8 +49,7 @@ def describe_df(df):
 
 
 def tipifica_variables():
-    
-import pandas as pd
+import pandas as pd  # Asegúrate de importar pandas
 
 # Función tipifica_variables
 def tipifica_variables(df, umbral_categoria, umbral_continua):
@@ -82,10 +81,6 @@ def tipifica_variables(df, umbral_categoria, umbral_continua):
     resultado_df = pd.DataFrame(tipo_sugerido, columns=["nombre_variable", "tipo_sugerido"])
     
     return resultado_df
-
-# Leer el archivo CSV
-file_path = r'C:\Users\angel\OneDrive\Documentos\DATA_SCIENCE\Bootcamp\Team-Challenge---Team-Ithaca\Toolbox\data\heart_cleveland_upload.csv'
-df = pd.read_csv(file_path)
 
 # Definir umbrales
 umbral_categoria = 10  # Puedes ajustar este valor según tus necesidades
