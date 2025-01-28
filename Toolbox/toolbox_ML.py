@@ -48,9 +48,28 @@ def describe_df(df):
     return description_df
 
 
-def tipifica_variables():
-# Función tipifica_variables
+
 def tipifica_variables(df, umbral_categoria, umbral_continua):
+    '''
+    Analizar las columnas de un DataFrame de pandas y clasifica cada una según su tipo de datos, 
+    basándose en reglas predefinidas relacionadas con la cardinalidad (cantidad de valores únicos) de las variables. 
+    Genera como salida un nuevo DataFrame con el nombre de cada columna y su tipo sugerido.
+
+    Argumentos:
+        - df:
+        - umbral_categoria: define el número máximo de valores únicos (cardinalidad) para clasificar una columna 
+            como una variable categórica. Si la cardinalidad es menor a este valor pero mayor que 2, se clasifica como categórica.
+        - umbral_continua: define el porcentaje mínimo de cardinalidad (número de valores únicos dividido entre la cantidad 
+            total de filas) para clasificar una columna como numérica continua. 
+            Las columnas que no cumplan con este criterio se clasifican como numéricas discretas.
+
+    Retorna: 
+    Un DataFrame que contiene:
+        - nombre_variable: Nombre de cada columna del DataFrame original.
+        - tipo_sugerido: Tipo sugerido para la variable (Binaria, Categórica, Numérica Continua, o Numérica Discreta).
+    
+    
+    '''
     # Crear un DataFrame vacío para guardar los resultados
     tipo_sugerido = []
 
@@ -81,14 +100,14 @@ def tipifica_variables(df, umbral_categoria, umbral_continua):
     return resultado_df
 
 # Definir umbrales
-umbral_categoria = 10  # Puedes ajustar este valor según tus necesidades
-umbral_continua = 0.1   # Puedes ajustar este valor según tus necesidades
+#umbral_categoria = 10  # Puedes ajustar este valor según tus necesidades
+#umbral_continua = 0.1   # Puedes ajustar este valor según tus necesidades
 
 # Aplicar la función
-resultado = tipifica_variables(df, umbral_categoria, umbral_continua)
+#resultado = tipifica_variables(df, umbral_categoria, umbral_continua)
 
 # Mostrar el resultado
-print(resultado)
+#print(resultado)
 
 
 
