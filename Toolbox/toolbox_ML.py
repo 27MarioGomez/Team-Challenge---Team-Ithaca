@@ -362,7 +362,6 @@ def plot_features_cat_regression(df, target_col="", columns=None, pvalue=0.05, w
                     plt.title(f"Distribución de '{target_col}' para '{column}' = '{cat}'")
                     plt.xlabel(target_col)
                     plt.ylabel("Frecuencia")
-                    plt.legend()
                     plt.show()
 
         # Si 'with_individual_plot' es False, genera gráficos agrupados
