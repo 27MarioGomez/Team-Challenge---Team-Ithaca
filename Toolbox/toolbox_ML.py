@@ -364,31 +364,19 @@ def plot_features_cat_regression(df, target_col="", columns=None, pvalue=0.05, w
                     plt.ylabel("Frecuencia")
                     plt.show()
 
-        # Si 'with_individual_plot' es False, genera gráficos agrupados
-        # Si es binario el target es diferente a si es continuo
-        if df[target_col].nunique() != 2:
-            for column in columns:
-                unique_cats = df[column].unique()
-                
-                plt.figure(figsize=(10, 6))
-                for cat in unique_cats:
-                    sns.histplot(df[df[column] == cat][target_col], kde=True, label=str(cat), bins=20)
-                
-                plt.title(f'Histograms of {target_col} for {column}')
-                plt.xlabel(target_col)
-                plt.ylabel('Frequency')
-                plt.legend()
-                plt.show()
-        else:
-            for column in columns:
-                unique_cats = df[column].unique()
-                plt.figure(figsize=(10, 6))
-                sns.countplot(x=df[column], hue=df[target_col], data=df)
-                plt.title(f'Proporción de {target_col} para {column}')
-                plt.xlabel(column)
-                plt.ylabel('Count')
-                plt.show()
+        # Genera gráficos agrupados
+        for column in columns:
+            unique_cats = df[column].unique()
             
+            plt.figure(figsize=(10, 6))
+            for cat in unique_cats:
+                sns.histplot(df[df[column] == cat][target_col], kde=True, label=str(cat), bins=20)
+            
+            plt.title(f'Histograms of {target_col} for {column}')
+            plt.xlabel(target_col)
+            plt.ylabel('Frequency')
+            plt.legend()
+            plt.show()
 
     else:
     # Si no había ninguna seleccionada
